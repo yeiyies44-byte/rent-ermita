@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renta Ermita — Expediente</title>
+<style>
+  :root {
+    --bg: #dcecf6;
+    --text: #2b3138;
+    --muted: #63737f;
+    --muted-dim: #8fa1ab;
+    --shadow-d: #bcd4e2;
+    --shadow-l: #ffffff;
+    --teal: #5cb3d1;
+    --teal-dark: #2d7a94;
+    --teal-soft: #d6eef5;
+    --risk: #c85a45;
+    --risk-soft: #f0d3cd;
+    --warn: #ab9440;
+    --warn-soft: #fbf5dc;
+    --divider: rgba(0,0,0,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #3d4b54;
+      --text: #eef2f5;
+      --muted: #aab3ba;
+      --muted-dim: #7c868e;
+      --shadow-d: #2c373e;
+      --shadow-l: #4e5f69;
+      --teal: #5cc7dd;
+      --teal-dark: #9fe3ef;
+      --teal-soft: #274752;
+      --risk: #e0776a;
+      --risk-soft: #5c3830;
+      --warn: #e8d896;
+      --warn-soft: #524730;
+      --divider: rgba(255,255,255,0.08);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "SF Pro Text", "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
+    padding: 32px 20px 80px;
+  }
+  .rounded-face {
+    font-family: ui-rounded, "SF Pro Rounded", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  .wrap { max-width: 800px; margin: 0 auto; }
+  .tab { font-variant-numeric: tabular-nums; }
+
+  .raised {
+    background: var(--bg);
+    border-radius: 22px;
+    box-shadow: 8px 8px 16px var(--shadow-d), -8px -8px 16px var(--shadow-l);
+  }
+  .raised-sm {
+    background: var(--bg);
+    border-radius: 14px;
+    box-shadow: 4px 4px 8px var(--shadow-d), -4px -4px 8px var(--shadow-l);
+  }
+  .inset {
+    background: var(--bg);
+    border-radius: 16px;
+    box-shadow: inset 4px 4px 8px var(--shadow-d), inset -4px -4px 8px var(--shadow-l);
+  }
+  .pressable {
+    cursor: pointer;
+    border: none;
+    background: var(--bg);
+    color: var(--muted);
+    font: inherit;
+    transition: box-shadow 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+  .pressable[aria-pressed="true"] {
+    background: var(--teal);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 3px 3px 6px var(--shadow-d), -3px -3px 6px var(--shadow-l);
+  }
+  .pressable[aria-pressed="false"] {
+    box-shadow: 3px 3px 6px var(--shadow-d), -3px -3px 6px var(--shadow-l);
+  }
+
+  .searchbar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+  }
+  .searchbar svg { flex-shrink: 0; color: var(--teal); }
+  .searchbar input {
+    border: none; outline: none; background: transparent;
+    font: inherit; font-size: 14.5px; color: var(--text);
+    width: 100%; letter-spacing: 0.02em;
+  }
+  .searchbar input::placeholder { color: var(--muted-dim); text-transform: uppercase; font-size: 12.5px; letter-spacing: 0.04em; }
+
+  header.head { margin-bottom: 20px; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; letter-spacing: 0.02em; color: var(--muted);
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-soft);
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .dek { margin: 0; color: var(--muted); font-size: 15px; max-width: 60ch; }
+
+  .alert {
+    margin: 20px 0;
+    padding: 18px 20px;
+    font-size: 14.5px;
+    color: var(--text);
+  }
+  .alert b { color: var(--teal-dark); }
+  .alert .tag {
+    display: inline-block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .alert.priority { border: 2px solid var(--teal); }
+  .alert.priority .tag { color: var(--teal-dark); font-weight: 700; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .stat { padding: 16px; text-align: center; }
+  .stat .num { font-size: 24px; font-weight: 700; color: var(--teal-dark); }
+  .stat .label { font-size: 11.5px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .chart-card { padding: 20px; margin: 20px 0; }
+  .chart-card h2 { margin: 0 0 4px; font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+  .chart-card .chart-sub { font-size: 12.5px; color: var(--muted-dim); margin-bottom: 16px; }
+  .chart-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .chart-row .chart-label { width: 34%; font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chart-track { flex: 1; height: 14px; border-radius: 999px; background: var(--bg); box-shadow: inset 3px 3px 6px var(--shadow-d), inset -3px -3px 6px var(--shadow-l); overflow: hidden; }
+  .chart-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--teal), var(--teal-dark)); }
+  .chart-price { width: 68px; text-align: right; font-size: 12.5px; font-weight: 700; color: var(--text); flex-shrink: 0; }
+
+  .reco { padding: 20px; margin: 20px 0; }
+  .reco-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+  .reco h2 { margin: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+  .toggle-pair { display: inline-flex; padding: 4px; border-radius: 999px; box-shadow: inset 3px 3px 6px var(--shadow-d), inset -3px -3px 6px var(--shadow-l); }
+  .toggle-pair button { border: none; background: transparent; font: inherit; font-size: 12.5px; font-weight: 700; padding: 8px 16px; border-radius: 999px; color: var(--muted); cursor: pointer; }
+  .toggle-pair button.active { background: var(--teal); color: #fff; box-shadow: 2px 2px 5px var(--shadow-d); }
+  .route { display: none; font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .route.active { display: block; }
+  .route .route-name { font-weight: 700; color: var(--text); margin-bottom: 6px; }
+
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    margin: 24px 0 16px;
+  }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { padding: 9px 16px; border-radius: 999px; font-size: 13.5px; }
+  .controls select {
+    margin-left: auto;
+    padding: 9px 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    box-shadow: inset 3px 3px 6px var(--shadow-d), inset -3px -3px 6px var(--shadow-l);
+  }
+
+  .list { display: flex; flex-direction: column; gap: 14px; }
+  .entry { padding: 20px; }
+  .entry.priority { border: 2px solid var(--teal); }
+  .entry-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .entry-title { font-size: 16.5px; font-weight: 700; }
+  .entry-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+  .score-pill {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .tier-alta { background: var(--teal); color: #fff; }
+  .tier-media { background: rgba(128,128,128,0.15); color: var(--muted); }
+  .tier-riesgo { background: var(--risk-soft); color: var(--risk); }
+
+  .budget-pill { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; }
+  .budget-in { background: var(--teal-soft); color: var(--teal-dark); }
+  .budget-out { background: var(--risk-soft); color: var(--risk); }
+
+  .score-track { margin: 12px 0; height: 10px; border-radius: 999px; background: var(--bg); box-shadow: inset 3px 3px 6px var(--shadow-d), inset -3px -3px 6px var(--shadow-l); position: relative; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 999px; }
+  .score-fill.tier-alta { background: linear-gradient(90deg, var(--teal), var(--teal-dark)); }
+  .score-fill.tier-media { background: var(--muted-dim); }
+  .score-fill.tier-riesgo { background: var(--risk); }
+
+  .entry-meta {
+    display: flex; flex-wrap: wrap; gap: 8px 18px;
+    margin: 12px 0; font-size: 13.5px; color: var(--muted);
+  }
+  .entry-meta span b { color: var(--text); }
+
+  .flags { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+  .flag { font-size: 11.5px; padding: 4px 10px; border-radius: 999px; }
+  .flag-ok { background: var(--teal-soft); color: var(--teal-dark); }
+  .flag-warn { background: var(--warn-soft); color: var(--warn); }
+  .flag-risk { background: var(--risk-soft); color: var(--risk); }
+
+  .entry-notas { font-size: 13.5px; color: var(--muted); margin-top: 10px; font-style: italic; }
+  .entry-contact { font-size: 13px; color: var(--teal-dark); margin-top: 8px; font-weight: 600; }
+  .entry-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 14px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    background: var(--teal);
+    color: #fff !important;
+    font-size: 13px; font-weight: 700;
+    text-decoration: none;
+    box-shadow: 3px 3px 8px var(--shadow-d);
+  }
+
+  .sources { margin-top: 36px; }
+  .sources h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); margin-bottom: 12px; }
+  .source-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; margin-bottom: 8px; font-size: 13.5px;
+  }
+  .source-name { display: flex; flex-direction: column; }
+  .source-name .status-label { font-size: 11px; color: var(--muted-dim); margin-top: 2px; }
+  .mini-toggle { width: 40px; height: 22px; border-radius: 999px; position: relative; flex-shrink: 0; box-shadow: inset 3px 3px 6px var(--shadow-d), inset -3px -3px 6px var(--shadow-l); }
+  .mini-toggle .knob { position: absolute; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition: left 0.15s ease, background 0.15s ease; }
+  .mini-toggle.on { background: var(--teal); }
+  .mini-toggle.on .knob { left: 21px; }
+  .mini-toggle.off .knob { left: 3px; background: var(--muted-dim); }
+
+  footer { margin-top: 36px; padding: 20px; font-size: 13px; color: var(--muted); }
+  footer p { margin: 0 0 8px; }
+  footer p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 560px) {
+    .stats { grid-template-columns: 1fr; }
+    h1 { font-size: 25px; }
+    .chart-row .chart-label { width: 40%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div class="eyebrow"><span class="dot"></span> Solo ustedes dos — Yei &amp; Fang</div>
+    <h1 class="rounded-face">Renta cerca de La Esmeralda, CENART</h1>
+    <p class="dek">Expediente vivo de candidatos caminables desde Metro Ermita y General Anaya.</p>
+  </header>
+
+  <div class="searchbar inset">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="searchBox" placeholder="Buscar por título o colonia">
+  </div>
+
+  <div class="alert inset priority">
+    <span class="tag">Lista filtrada (4 ago, noche) — solo lo que compite de verdad</span>
+    Presupuesto real: <b>$8,000 MXN combinados</b> ($4,000 c/u), rango caminando: <b>25-30 min máximo</b>. Quedan solo los 3 candidatos que sí compiten hoy: el loft cerca de Taxqueña (2 camas, $7,500, 32 min), Prado Churubusco ($6,000, 26-30 min, 1 persona), y Frente al CNA ($6,500, disponibilidad sin confirmar).
+  </div>
+
+  <div class="alert inset">
+    <span class="tag">Sobre el precio de $4,000 por persona</span>
+    Es lo que cobraba Oswaldo por el cuarto individual — pero ese precio venía junto con el riesgo que están evitando ahora (arrendador viviendo en la misma casa, sin contrato). En la zona caminable a CENART, el piso real hoy es <b>~$6,000–8,500</b> por cuarto individual.
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="chart-card raised">
+    <h2>Comparativa de precios</h2>
+    <div class="chart-sub">Candidatos con precio confirmado, de menor a mayor</div>
+    <div id="chartBody"></div>
+  </div>
+
+  <div class="reco raised">
+    <div class="reco-head">
+      <h2>Recomendación de esta semana — para 2 personas</h2>
+      <div class="toggle-pair">
+        <button type="button" data-route="a" class="active">Ruta A</button>
+        <button type="button" data-route="b">Ruta B</button>
+      </div>
+    </div>
+    <div class="route active" data-route-panel="a">
+      <div class="route-name">Un solo lugar para ambos — mejor opción real hoy</div>
+      El loft cerca de Metro Taxqueña ($7,500, 2 camas, espacio propio no compartido con extraños, 32 min caminando) es lo más cercano a lo que buscan dentro de presupuesto. Contactar por Messenger de Facebook (vendedor: Rafa Patria).
+    </div>
+    <div class="route" data-route-panel="b">
+      <div class="route-name">Respaldo — 1 persona nada más</div>
+      Prado Churubusco ($6,000, 26-30 min) y Frente al CNA ($6,500, disponibilidad sin confirmar) son opciones de 1 sola persona.
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="chips">
+      <button class="chip pressable" data-filter="todos" aria-pressed="true">Todos</button>
+      <button class="chip pressable" data-filter="alta" aria-pressed="false">Prioridad</button>
+      <button class="chip pressable" data-filter="media" aria-pressed="false">A revisar</button>
+      <button class="chip pressable" data-filter="riesgo" aria-pressed="false">Riesgo</button>
+    </div>
+    <select id="sort">
+      <option value="score">Ordenar: puntaje</option>
+      <option value="price">Ordenar: precio</option>
+    </select>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="sources">
+    <h2>Fuentes consultadas</h2>
+    <div id="sourcesList"></div>
+  </div>
+
+  <footer class="raised">
+    <p><b>Cómo se puntúa:</b> contrato por escrito (+3 / -3 si es solo verbal), arrendador no vive ahí (+2 / -2 si sí), sin depósito antes de ver en persona (+1 / -5 si lo piden), caminable a CENART (+2 / -2), precio dentro de rango real.</p>
+    <p>Ancla de búsqueda: Cerro Malinalli 10, Benito Juárez.</p>
+    <p id="lastUpdated" class="tab">Última actualización: 4 ago 2026 — versión enviada por WhatsApp, para la más reciente pide el link del dashboard a Yei.</p>
+  </footer>
+</div>
+
+<script>
+  const BUDGET_TOTAL = 8000;
+
+  const listings = [
+    {
+      titulo: "Frente al CNA",
+      plataforma: "Roomgo",
+      link: "https://www.roomgo.com.mx/en-renta-coyoacan/habitacion-frente-al-cna-entre-tlalpan-ermita-y-rio-churubusco/H21090417237711",
+      precio: 6500,
+      colonia: "El Prado / Andrómeda",
+      capacidad: "1 persona",
+      caminable: "si",
+      contrato: "no_confirmado",
+      arrendador: "no_se",
+      deposito: "no_se",
+      contacto: "Roomgo exige crear cuenta para ver el anuncio.",
+      notas: "El link directo redirige a la búsqueda general de Coyoacán, no al anuncio — probablemente vencido. Es para 1 sola persona de todos modos."
+    },
+    {
+      titulo: "Loft equipado cerca Metro Taxqueña — 2 camas",
+      plataforma: "Facebook Marketplace",
+      link: "https://www.facebook.com/marketplace/item/1165054542451722/",
+      precio: 7500,
+      colonia: "Coyoacán (a 3 cuadras de Metro Taxqueña)",
+      capacidad: "2 camas — loft privado, no compartido con extraños",
+      caminable: "dudoso",
+      contrato: "no_confirmado",
+      arrendador: "no_se",
+      deposito: "no_se",
+      contacto: "Vendedor: Rafa Patria (6 valoraciones en FB). Contactar por Messenger desde la publicación.",
+      notas: "Loft equipado con 2 camas, baño propio, cocina completa, agua caliente 24h, wifi. SÍ es un espacio propio para los dos, no compartido. 32 min / 2.3 km desde Metro Tasqueña a CENART — el mejor candidato real de hoy."
+    },
+    {
+      titulo: "Recámara en renta, Prado Churubusco",
+      plataforma: "Mercado Libre",
+      link: "https://inmueble.mercadolibre.com.mx/MLM-5884035660-recamara-en-renta-en-la-colonia-prado-churubusco-_JM",
+      precio: 6000,
+      colonia: "Prado Churubusco",
+      capacidad: "1 persona (\"ideal para 1 persona\" según el anuncio)",
+      caminable: "dudoso",
+      contrato: "no_confirmado",
+      arrendador: "no_se",
+      deposito: "no_se",
+      contacto: "Publicado por particular (Jorge Alfredo). El anuncio oculta el teléfono hasta iniciar sesión en Mercado Libre.",
+      notas: "26-30 min / 1.9 km a CENART. Es para 1 sola persona, no resuelve la prioridad de espacio para los dos."
+    }
+  ];
+
+  const sources = [
+    { name: "Mercado Libre Inmuebles", status: "used", label: "consultado" },
+    { name: "Roomgo", status: "used", label: "exige cuenta" },
+    { name: "Rentola", status: "blocked", label: "dominio caído" },
+    { name: "Propiedades.com", status: "used", label: "consultado" },
+    { name: "Inmuebles24", status: "used", label: "consultado" },
+    { name: "Trovit", status: "used", label: "consultado" },
+    { name: "Metros Cúbicos", status: "used", label: "consultado" },
+    { name: "Homie", status: "used", label: "consultado" },
+    { name: "Badi", status: "manual", label: "requiere cuenta" },
+    { name: "Vivanuncios", status: "used", label: "consultado" },
+    { name: "Lamudi", status: "blocked", label: "bloquea (403)" },
+    { name: "Facebook (Marketplace y grupos)", status: "used", label: "consultado en vivo" },
+    { name: "Booking.com", status: "manual", label: "no es renta real" }
+  ];
+
+  function scoreListing(l) {
+    let score = 0;
+    const flags = [];
+    const precio = Number(l.precio) || 0;
+    if (precio > 0 && precio <= 4000) { score += 2; flags.push({kind:'ok', text:'dentro del tope de $4,000'}); }
+    else if (precio > 0 && precio <= 6500) { score += 1; flags.push({kind:'ok', text:'dentro de rango real de la zona'}); }
+    else if (precio === 0) { flags.push({kind:'warn', text:'precio sin confirmar'}); }
+    else if (precio <= 8000) { /* neutral */ }
+    else { score -= 1; flags.push({kind:'warn', text:'arriba de $8,000'}); }
+    if (l.contrato === 'confirmado') { score += 3; flags.push({kind:'ok', text:'contrato por escrito confirmado'}); }
+    else if (l.contrato === 'solo_verbal') { score -= 3; flags.push({kind:'risk', text:'solo acuerdo verbal'}); }
+    else { flags.push({kind:'warn', text:'contrato sin confirmar'}); }
+    if (l.arrendador === 'no') { score += 2; flags.push({kind:'ok', text:'arrendador no vive ahí'}); }
+    else if (l.arrendador === 'si') { score -= 2; flags.push({kind:'risk', text:'arrendador vive en la propiedad'}); }
+    if (l.deposito === 'no') { score += 1; }
+    else if (l.deposito === 'si') { score -= 5; flags.push({kind:'risk', text:'pide depósito antes de ver en persona'}); }
+    else { flags.push({kind:'warn', text:'depósito adelantado sin confirmar'}); }
+    if (l.caminable === 'si') { score += 2; flags.push({kind:'ok', text:'caminable a CENART'}); }
+    else if (l.caminable === 'no') { score -= 2; flags.push({kind:'risk', text:'requiere transporte'}); }
+    let tier = 'media';
+    if (score >= 5) tier = 'alta';
+    else if (score <= 0) tier = 'riesgo';
+    return { score, tier, flags };
+  }
+
+  let activeFilter = 'todos';
+  let activeSort = 'score';
+  let searchTerm = '';
+
+  function renderStats(scored) {
+    const best = scored.reduce((a, b) => (b.scoreData.score > a.scoreData.score ? b : a), scored[0]);
+    const priced = scored.filter(l => Number(l.precio) > 0);
+    const cheapest = priced.length ? priced.reduce((a, b) => (Number(b.precio) < Number(a.precio) ? b : a)) : null;
+    const el = document.getElementById('stats');
+    el.innerHTML = `
+      <div class="stat raised-sm">
+        <div class="num rounded-face tab">${best ? best.scoreData.score : '—'}</div>
+        <div class="label">Mejor puntaje — ${best ? best.titulo : ''}</div>
+      </div>
+      <div class="stat raised-sm">
+        <div class="num rounded-face tab">${cheapest ? '$' + Number(cheapest.precio).toLocaleString('es-MX') : '—'}</div>
+        <div class="label">Más barato confirmado</div>
+      </div>
+      <div class="stat raised-sm">
+        <div class="num rounded-face tab">${scored.length}</div>
+        <div class="label">Candidatos activos</div>
+      </div>
+    `;
+  }
+
+  function renderChart(scored) {
+    const priced = scored.filter(l => Number(l.precio) > 0).slice().sort((a, b) => Number(a.precio) - Number(b.precio));
+    const max = priced.length ? Math.max(...priced.map(l => Number(l.precio))) : 1;
+    const body = document.getElementById('chartBody');
+    if (!priced.length) {
+      body.innerHTML = `<div style="font-size:13px;color:var(--muted);">Ningún candidato tiene precio confirmado todavía.</div>`;
+      return;
+    }
+    body.innerHTML = priced.map(l => `
+      <div class="chart-row">
+        <div class="chart-label">${l.titulo}</div>
+        <div class="chart-track"><div class="chart-fill" style="width:${Math.max(6, (Number(l.precio) / max) * 100)}%"></div></div>
+        <div class="chart-price tab">$${Number(l.precio).toLocaleString('es-MX')}</div>
+      </div>
+    `).join('');
+  }
+
+  function render() {
+    const scored = listings.map(l => ({ ...l, scoreData: scoreListing(l) }));
+    renderStats(scored);
+    renderChart(scored);
+
+    let filtered = scored;
+    if (activeFilter !== 'todos') {
+      filtered = filtered.filter(l => l.scoreData.tier === activeFilter);
+    }
+    if (searchTerm.trim()) {
+      const q = searchTerm.trim().toLowerCase();
+      filtered = filtered.filter(l => l.titulo.toLowerCase().includes(q) || l.colonia.toLowerCase().includes(q));
+    }
+    filtered = filtered.slice().sort((a, b) => {
+      if (a.prioridad && !b.prioridad) return -1;
+      if (!a.prioridad && b.prioridad) return 1;
+      if (activeSort === 'price') {
+        const pa = Number(a.precio) || Infinity;
+        const pb = Number(b.precio) || Infinity;
+        return pa - pb;
+      }
+      return b.scoreData.score - a.scoreData.score;
+    });
+
+    const list = document.getElementById('list');
+    if (!filtered.length) {
+      list.innerHTML = `<div class="raised" style="padding:24px;text-align:center;font-size:13.5px;color:var(--muted);">Nada coincide con ese filtro/búsqueda.</div>`;
+      return;
+    }
+    list.innerHTML = filtered.map(l => {
+      const tierLabel = l.scoreData.tier === 'alta' ? 'Prioridad' : l.scoreData.tier === 'riesgo' ? 'Riesgo' : 'A revisar';
+      const flagsHtml = l.scoreData.flags.map(f => `<span class="flag flag-${f.kind}">${f.text}</span>`).join('');
+      const precioNum = Number(l.precio) || 0;
+      const precioTxt = precioNum > 0 ? '$' + precioNum.toLocaleString('es-MX') + '/mes' : 'precio sin confirmar';
+      const barPct = Math.max(4, Math.min(100, ((l.scoreData.score + 6) / 16) * 100));
+      const budgetHtml = precioNum > 0
+        ? (precioNum <= BUDGET_TOTAL
+            ? `<span class="budget-pill budget-in">Cabe en $${BUDGET_TOTAL.toLocaleString('es-MX')} combinados</span>`
+            : `<span class="budget-pill budget-out">$${(precioNum - BUDGET_TOTAL).toLocaleString('es-MX')} arriba del presupuesto</span>`)
+        : '';
+      return `
+        <div class="entry raised ${l.prioridad ? 'priority' : ''}">
+          <div class="entry-top">
+            <div>
+              <div class="entry-title">${l.prioridad ? '★ ' : ''}${l.titulo}</div>
+              <div class="entry-sub">${l.plataforma} · ${l.colonia}</div>
+            </div>
+            <div class="score-pill tier-${l.scoreData.tier}">${tierLabel} · ${l.scoreData.score}</div>
+          </div>
+          <div class="score-track"><div class="score-fill tier-${l.scoreData.tier}" style="width:${barPct}%"></div></div>
+          <div class="entry-meta">
+            <span><b>${precioTxt}</b></span>
+            <span>Capacidad: <b>${l.capacidad}</b></span>
+          </div>
+          ${budgetHtml}
+          <div class="flags">${flagsHtml}</div>
+          ${l.notas ? `<div class="entry-notas">${l.notas}</div>` : ''}
+          ${l.contacto ? `<div class="entry-contact">Cómo contactar: ${l.contacto}</div>` : ''}
+          <a class="entry-link" href="${l.link}" target="_blank" rel="noopener">Ver anuncio →</a>
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilter = btn.dataset.filter;
+      document.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === activeFilter ? 'true' : 'false'));
+      render();
+    });
+  });
+  document.getElementById('sort').addEventListener('change', (e) => {
+    activeSort = e.target.value;
+    render();
+  });
+  document.getElementById('searchBox').addEventListener('input', (e) => {
+    searchTerm = e.target.value;
+    render();
+  });
+  document.querySelectorAll('.toggle-pair button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-pair button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.route').forEach(r => r.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector(`.route[data-route-panel="${btn.dataset.route}"]`).classList.add('active');
+    });
+  });
+
+  document.getElementById('sourcesList').innerHTML = sources.map(s => {
+    const on = s.status === 'used';
+    return `
+      <div class="source-row raised-sm">
+        <div class="source-name">
+          <span>${s.name}</span>
+          <span class="status-label">${s.label}</span>
+        </div>
+        <div class="mini-toggle ${on ? 'on' : 'off'}"><div class="knob"></div></div>
+      </div>
+    `;
+  }).join('');
+
+  render();
+</script>
+</body>
+</html>
