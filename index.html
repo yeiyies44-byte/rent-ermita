@@ -248,6 +248,35 @@
   .status-sin_contactar { background: rgba(128,128,128,0.12); color: var(--muted); }
   .status-sin_contactar .dot2 { background: var(--muted-dim); }
 
+  .suggest { padding: 20px; margin: 20px 0; }
+  .suggest h2 { margin: 0 0 4px; font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+  .suggest .suggest-sub { font-size: 12.5px; color: var(--muted-dim); margin-bottom: 16px; }
+  .suggest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .suggest-field { grid-column: span 2; }
+  .suggest-field.half { grid-column: span 1; }
+  .suggest label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); margin-bottom: 6px; }
+  .suggest input, .suggest textarea {
+    width: 100%; border: none; outline: none; background: var(--bg); color: var(--text);
+    font: inherit; font-size: 13.5px; padding: 10px 12px; border-radius: 10px;
+    box-shadow: inset 3px 3px 6px var(--shadow-d), inset -3px -3px 6px var(--shadow-l);
+  }
+  .suggest textarea { resize: vertical; min-height: 50px; }
+  .suggest-actions { display: flex; align-items: center; gap: 10px; margin-top: 4px; flex-wrap: wrap; }
+  .suggest-btn {
+    border: none; cursor: pointer; padding: 10px 20px; border-radius: 999px;
+    background: var(--teal); color: #fff; font: inherit; font-size: 13px; font-weight: 700;
+    box-shadow: 3px 3px 8px var(--shadow-d);
+  }
+  .suggest-msg { font-size: 12.5px; margin-top: 4px; }
+  .suggest-msg.warn { color: var(--warn); }
+  .suggest-msg.ok { color: var(--teal-dark); }
+  .suggest-output { margin-top: 14px; padding: 14px; font-size: 13px; white-space: pre-wrap; }
+  .pending-list { margin-top: 18px; }
+  .pending-list h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); margin-bottom: 10px; }
+  .pending-item { padding: 12px 14px; font-size: 12.5px; margin-bottom: 8px; }
+  .pending-item .pi-title { font-weight: 700; }
+  .pending-item .pi-meta { color: var(--muted); margin-top: 2px; }
+
   .score-track { margin: 12px 0; height: 10px; border-radius: 999px; background: var(--bg); box-shadow: inset 3px 3px 6px var(--shadow-d), inset -3px -3px 6px var(--shadow-l); position: relative; overflow: hidden; }
   .score-fill { height: 100%; border-radius: 999px; }
   .score-fill.tier-alta { background: linear-gradient(90deg, var(--teal), var(--teal-dark)); }
@@ -346,6 +375,35 @@
       <div class="route-name">Un solo lugar para ambos — la única opción real hoy</div>
       El loft cerca de Metro Taxqueña ($7,500 → $3,750 c/u, 2 camas, espacio propio no compartido con extraños, 32 min caminando) es el único candidato compartido dentro de presupuesto. <b>Ya se le escribió</b> al vendedor (Rafa Patria) por Messenger el 4 de agosto — esperando respuesta.
     </div>
+  </div>
+
+  <div class="suggest raised">
+    <h2>¿Viste algo que nosotros no?</h2>
+    <div class="suggest-sub">Fang (o quien sea): pega aquí un link de un cuarto/depa compartido que hayas encontrado. Revisa que no esté repetido antes de mandarlo.</div>
+    <div class="suggest-grid">
+      <div class="suggest-field half">
+        <label for="sgTitulo">Título del anuncio</label>
+        <input type="text" id="sgTitulo" placeholder="Ej. Depa 2 recámaras cerca de...">
+      </div>
+      <div class="suggest-field half">
+        <label for="sgPrecio">Precio mensual (opcional)</label>
+        <input type="text" id="sgPrecio" placeholder="Ej. 7000">
+      </div>
+      <div class="suggest-field">
+        <label for="sgLink">Link del anuncio</label>
+        <input type="url" id="sgLink" placeholder="https://...">
+      </div>
+      <div class="suggest-field">
+        <label for="sgNota">¿Por qué te gustó? (opcional)</label>
+        <textarea id="sgNota" placeholder="Ej. tiene 2 cuartos, parece caminable, etc."></textarea>
+      </div>
+    </div>
+    <div class="suggest-actions">
+      <button type="button" class="suggest-btn" id="sgSubmit">Revisar y preparar mensaje</button>
+      <span class="suggest-msg" id="sgMsg"></span>
+    </div>
+    <div class="suggest-output raised-sm" id="sgOutput" style="display:none;"></div>
+    <div class="pending-list" id="pendingList"></div>
   </div>
 
   <div class="controls">
@@ -598,6 +656,118 @@
       </div>
     `;
   }).join('');
+
+  // --- Sugerencias de la comunidad (sin backend: valida duplicados y prepara mensaje para WhatsApp) ---
+  const PENDING_KEY = 'rentaErmitaSugerencias';
+
+  function normalizeUrl(url) {
+    try {
+      const u = new URL(url.trim());
+      let path = u.hostname.replace(/^www\./, '') + u.pathname;
+      path = path.replace(/\/+$/, '').toLowerCase();
+      return path;
+    } catch {
+      return url.trim().toLowerCase();
+    }
+  }
+
+  function normalizeTitle(t) {
+    return t.trim().toLowerCase().replace(/[^a-z0-9áéíóúñ ]/gi, '').replace(/\s+/g, ' ');
+  }
+
+  function getPending() {
+    try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); } catch { return []; }
+  }
+  function savePending(list) {
+    localStorage.setItem(PENDING_KEY, JSON.stringify(list));
+  }
+
+  function findDuplicate(link, titulo) {
+    const normLink = link ? normalizeUrl(link) : '';
+    const normTitle = normalizeTitle(titulo || '');
+
+    for (const l of listings) {
+      if (normLink && normalizeUrl(l.link) === normLink) {
+        return { where: 'lista oficial', titulo: l.titulo };
+      }
+      const lTitle = normalizeTitle(l.titulo);
+      if (normTitle.length > 6 && lTitle.length > 6 && (lTitle.includes(normTitle) || normTitle.includes(lTitle))) {
+        return { where: 'lista oficial', titulo: l.titulo };
+      }
+    }
+    for (const p of getPending()) {
+      if (normLink && normalizeUrl(p.link) === normLink) {
+        return { where: 'sugerencias pendientes', titulo: p.titulo };
+      }
+    }
+    return null;
+  }
+
+  function renderPending() {
+    const pending = getPending();
+    const el = document.getElementById('pendingList');
+    if (!pending.length) { el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <h3>Sugerencias guardadas en este navegador (${pending.length})</h3>
+      ${pending.map((p, i) => `
+        <div class="pending-item raised-sm">
+          <div class="pi-title">${p.titulo}</div>
+          <div class="pi-meta">${p.precio ? '$' + p.precio + '/mes · ' : ''}${p.link}</div>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  document.getElementById('sgSubmit').addEventListener('click', () => {
+    const titulo = document.getElementById('sgTitulo').value.trim();
+    const link = document.getElementById('sgLink').value.trim();
+    const precio = document.getElementById('sgPrecio').value.trim();
+    const nota = document.getElementById('sgNota').value.trim();
+    const msgEl = document.getElementById('sgMsg');
+    const outputEl = document.getElementById('sgOutput');
+
+    if (!titulo || !link) {
+      msgEl.textContent = 'Falta el título o el link.';
+      msgEl.className = 'suggest-msg warn';
+      outputEl.style.display = 'none';
+      return;
+    }
+
+    const dup = findDuplicate(link, titulo);
+    if (dup) {
+      msgEl.textContent = `Ya está en ${dup.where}: "${dup.titulo}" — no lo mandes, ya lo tenemos.`;
+      msgEl.className = 'suggest-msg warn';
+      outputEl.style.display = 'none';
+      return;
+    }
+
+    msgEl.textContent = 'No está repetido — copia el mensaje de abajo y mándaselo a Yei.';
+    msgEl.className = 'suggest-msg ok';
+
+    const texto = `Encontré esto para Renta Ermita:\n\n${titulo}\n${precio ? '$' + precio + '/mes\n' : ''}${link}\n${nota ? '\n' + nota : ''}`;
+    outputEl.style.display = 'block';
+    outputEl.innerHTML = `
+      <div style="white-space:pre-wrap;margin-bottom:10px;">${texto.replace(/</g, '&lt;')}</div>
+      <button type="button" class="suggest-btn" id="sgCopy">Copiar mensaje</button>
+    `;
+    document.getElementById('sgCopy').addEventListener('click', () => {
+      navigator.clipboard.writeText(texto).then(() => {
+        document.getElementById('sgCopy').textContent = 'Copiado ✓';
+      });
+    });
+
+    const pending = getPending();
+    pending.push({ titulo, link, precio, nota, fecha: new Date().toISOString().slice(0, 10) });
+    savePending(pending);
+    renderPending();
+
+    document.getElementById('sgTitulo').value = '';
+    document.getElementById('sgLink').value = '';
+    document.getElementById('sgPrecio').value = '';
+    document.getElementById('sgNota').value = '';
+  });
+
+  renderPending();
 
   render();
 </script>
