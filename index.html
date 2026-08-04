@@ -237,6 +237,17 @@
   .budget-in { background: var(--teal-soft); color: var(--teal-dark); }
   .budget-out { background: var(--risk-soft); color: var(--risk); }
 
+  .contact-status { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 14px; border-radius: 12px; font-size: 12.5px; font-weight: 600; }
+  .contact-status .dot2 { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .status-esperando { background: var(--warn-soft); color: var(--warn); }
+  .status-esperando .dot2 { background: var(--warn); }
+  .status-respondio { background: var(--teal-soft); color: var(--teal-dark); }
+  .status-respondio .dot2 { background: var(--teal); }
+  .status-descartado { background: var(--risk-soft); color: var(--risk); }
+  .status-descartado .dot2 { background: var(--risk); }
+  .status-sin_contactar { background: rgba(128,128,128,0.12); color: var(--muted); }
+  .status-sin_contactar .dot2 { background: var(--muted-dim); }
+
   .score-track { margin: 12px 0; height: 10px; border-radius: 999px; background: var(--bg); box-shadow: inset 3px 3px 6px var(--shadow-d), inset -3px -3px 6px var(--shadow-l); position: relative; overflow: hidden; }
   .score-fill { height: 100%; border-radius: 999px; }
   .score-fill.tier-alta { background: linear-gradient(90deg, var(--teal), var(--teal-dark)); }
@@ -333,7 +344,7 @@
     </div>
     <div class="route active" data-route-panel="a">
       <div class="route-name">Un solo lugar para ambos — la única opción real hoy</div>
-      El loft cerca de Metro Taxqueña ($7,500 → $3,750 c/u, 2 camas, espacio propio no compartido con extraños, 32 min caminando) es el único candidato compartido dentro de presupuesto. Contactar por Messenger de Facebook (vendedor: Rafa Patria).
+      El loft cerca de Metro Taxqueña ($7,500 → $3,750 c/u, 2 camas, espacio propio no compartido con extraños, 32 min caminando) es el único candidato compartido dentro de presupuesto. <b>Ya se le escribió</b> al vendedor (Rafa Patria) por Messenger el 4 de agosto — esperando respuesta.
     </div>
   </div>
 
@@ -388,6 +399,9 @@
       deposito: "no_se",
       prioridad: true,
       contacto: "Vendedor: Rafa Patria (6 valoraciones en FB). Contactar por Messenger desde la publicación.",
+      contactoEstado: "esperando",
+      contactoFecha: "4 ago 2026",
+      contactoNota: "Mensaje enviado por Messenger preguntando disponibilidad y pidiendo visita en persona antes de cualquier pago.",
       notas: "NUEVO (4 ago, en vivo con Yei): loft equipado con 2 camas, baño propio, cocina completa (refri, microondas, estufa), agua caliente 24h, wifi. $7,500 ÷ 2 = $3,750 c/u — SÍ cabe en el presupuesto individual de $4,000. Espacio propio para los dos, no compartido. VERIFICADO EN MAPA: 32 min / 2.3 km desde Metro Tasqueña a CENART — un poco arriba del rango de 25-30 min, pero es el único candidato real de hoy que cabe en $4,000 por persona."
     }
   ];
@@ -515,6 +529,14 @@
             ? `<span class="budget-pill budget-in">Cabe en $${BUDGET_TOTAL.toLocaleString('es-MX')} combinados</span>`
             : `<span class="budget-pill budget-out">$${(precioNum - BUDGET_TOTAL).toLocaleString('es-MX')} arriba del presupuesto</span>`)
         : '';
+      const estadoLabels = { esperando: 'Esperando respuesta', respondio: 'Respondió', descartado: 'Descartado', sin_contactar: 'Sin contactar' };
+      const estado = l.contactoEstado || 'sin_contactar';
+      const contactStatusHtml = `
+        <div class="contact-status status-${estado}">
+          <span class="dot2"></span>
+          <span>${estadoLabels[estado]}${l.contactoFecha ? ' · ' + l.contactoFecha : ''}${l.contactoNota ? ' — ' + l.contactoNota : ''}</span>
+        </div>
+      `;
       return `
         <div class="entry raised ${l.prioridad ? 'priority' : ''}">
           <div class="entry-top">
@@ -533,6 +555,7 @@
           <div class="flags">${flagsHtml}</div>
           ${l.notas ? `<div class="entry-notas">${l.notas}</div>` : ''}
           ${l.contacto ? `<div class="entry-contact">Cómo contactar: ${l.contacto}</div>` : ''}
+          ${contactStatusHtml}
           <a class="entry-link" href="${l.link}" target="_blank" rel="noopener">Ver anuncio →</a>
         </div>
       `;
