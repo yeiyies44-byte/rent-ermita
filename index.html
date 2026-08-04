@@ -39,6 +39,38 @@
       --divider: rgba(255,255,255,0.08);
     }
   }
+  :root[data-theme="dark"] {
+    --bg: #3d4b54;
+    --text: #eef2f5;
+    --muted: #aab3ba;
+    --muted-dim: #7c868e;
+    --shadow-d: #2c373e;
+    --shadow-l: #4e5f69;
+    --teal: #5cc7dd;
+    --teal-dark: #9fe3ef;
+    --teal-soft: #274752;
+    --risk: #e0776a;
+    --risk-soft: #5c3830;
+    --warn: #e0c876;
+    --warn-soft: #4a4126;
+    --divider: rgba(255,255,255,0.08);
+  }
+  :root[data-theme="light"] {
+    --bg: #dcecf6;
+    --text: #2b3138;
+    --muted: #63737f;
+    --muted-dim: #8fa1ab;
+    --shadow-d: #bcd4e2;
+    --shadow-l: #ffffff;
+    --teal: #5cb3d1;
+    --teal-dark: #2d7a94;
+    --teal-soft: #d6eef5;
+    --risk: #c85a45;
+    --risk-soft: #f0d3cd;
+    --warn: #ab9440;
+    --warn-soft: #fbf5dc;
+    --divider: rgba(0,0,0,0.06);
+  }
 
   * { box-sizing: border-box; }
   body {
@@ -263,11 +295,13 @@
 </style>
 </head>
 <body>
+
+
 <div class="wrap">
   <header class="head">
     <div class="eyebrow"><span class="dot"></span> Solo ustedes dos — Yei &amp; Fang</div>
     <h1 class="rounded-face">Renta cerca de La Esmeralda, CENART</h1>
-    <p class="dek">Expediente vivo de candidatos caminables desde Metro Ermita y General Anaya.</p>
+    <p class="dek">Expediente vivo de candidatos caminables desde Metro Ermita y General Anaya. Se actualiza solo — investigación diaria automática, sin formularios que llenar.</p>
   </header>
 
   <div class="searchbar inset">
@@ -277,12 +311,12 @@
 
   <div class="alert inset priority">
     <span class="tag">Lista filtrada (4 ago, noche) — solo lo que compite de verdad</span>
-    Presupuesto real: <b>$8,000 MXN combinados</b> ($4,000 c/u), rango caminando: <b>25-30 min máximo</b>. Quedan solo los 3 candidatos que sí compiten hoy: el loft cerca de Taxqueña (2 camas, $7,500, 32 min), Prado Churubusco ($6,000, 26-30 min, 1 persona), y Frente al CNA ($6,500, disponibilidad sin confirmar).
+    Presupuesto real: <b>$8,000 MXN combinados</b> ($4,000 c/u), rango caminando: <b>25-30 min máximo</b>. Se quitaron de la lista los candidatos ya descartados por distancia, precio o link confirmado roto (Pueblo de los Reyes x2 a 51 min, depa Cruz Verde a 46 min y $15,000, Country Club sin fuente viva, "Frente al CNA" con link roto — Roomgo exige cuenta) — quedan solo los 2 que sí compiten hoy: el loft cerca de Taxqueña (2 camas, $7,500, 32 min) y Prado Churubusco ($6,000, 26-30 min, 1 persona).
   </div>
 
   <div class="alert inset">
     <span class="tag">Sobre el precio de $4,000 por persona</span>
-    Es lo que cobraba Oswaldo por el cuarto individual — pero ese precio venía junto con el riesgo que están evitando ahora (arrendador viviendo en la misma casa, sin contrato). En la zona caminable a CENART, el piso real hoy es <b>~$6,000–8,500</b> por cuarto individual.
+    Es lo que cobraba Oswaldo por el cuarto individual — pero ese precio venía junto con el riesgo que están evitando ahora (arrendador viviendo en la misma casa, sin contrato). En la zona caminable a CENART, publicado y con más independencia, el piso real hoy es <b>~$6,000–8,500</b> por cuarto individual. El agente sigue buscando espacios de 2 cuartos o compartidos que quepan en $8,000 combinados.
   </div>
 
   <div class="stats" id="stats"></div>
@@ -307,7 +341,7 @@
     </div>
     <div class="route" data-route-panel="b">
       <div class="route-name">Respaldo — 1 persona nada más</div>
-      Prado Churubusco ($6,000, 26-30 min) y Frente al CNA ($6,500, disponibilidad sin confirmar) son opciones de 1 sola persona.
+      Prado Churubusco ($6,000, 26-30 min) es la única opción de 1 sola persona que queda — sirve si deciden buscar por separado, no resuelve "un lugar para los dos".
     </div>
   </div>
 
@@ -333,8 +367,15 @@
 
   <footer class="raised">
     <p><b>Cómo se puntúa:</b> contrato por escrito (+3 / -3 si es solo verbal), arrendador no vive ahí (+2 / -2 si sí), sin depósito antes de ver en persona (+1 / -5 si lo piden), caminable a CENART (+2 / -2), precio dentro de rango real.</p>
-    <p>Ancla de búsqueda: Cerro Malinalli 10, Benito Juárez.</p>
-    <p id="lastUpdated" class="tab">Última actualización: 4 ago 2026 — versión enviada por WhatsApp, para la más reciente pide el link del dashboard a Yei.</p>
+    <p>Ancla de búsqueda: Cerro Malinalli 10, Benito Juárez — 14 min a pie de Metro Ermita. Agente automático corre todos los días a las 9am CDMX.</p>
+    <p style="margin-top:8px;">Nota del agente (3 ago, mañana): hoy casi todas las plataformas bloquearon el acceso automático a sus páginas de anuncio individual (403), incluso a anuncios con URL específica. También se dio de baja un candidato de la lista anterior ("Habitación con baño privado", Roomgo) porque se confirmó que su dirección real es San Pedro de los Pinos, fuera de la zona caminable.</p>
+    <p style="margin-top:8px;">Nota de Yei + navegador en vivo (3 ago, tarde): se confirmó que Roomgo exige crear cuenta para ver cualquier anuncio — no es bloqueo de bot, es requisito real de la plataforma. Se verificó en vivo un candidato con URL exacta y contacto directo por WhatsApp (agencia Interior1 Inmuebles) — pero a $15,000 queda fuera del presupuesto real de $8,000 confirmado hoy.</p>
+    <p style="margin-top:8px;">Nota del agente (4 ago): con una herramienta de scraping alterna se pudo abrir varios anuncios individuales de Mercado Libre hoy. Se dio de baja "Andrómeda #8": el anuncio original resultó fuera del mercado y su colonia real era otro "El Prado" en Iztapalapa, no el de la zona caminable. Se agregó un candidato nuevo en Prado Churubusco ($6,000, 1 persona) — colonia no validada originalmente, caminabilidad marcada "dudoso" hasta confirmar en mapa. Rentola.com.mx dejó de resolver por completo. La URL de "Frente al CNA" en Roomgo redirige a búsqueda general — no se pudo confirmar que el anuncio siga activo. Se intentó leer 2 publicaciones de grupos de Facebook (General Anaya $5,800 y Country Club $5,500) pero la herramienta no soporta Facebook — no se leyeron ni inventaron datos de ahí.</p>
+    <p style="margin-top:8px;">Nota de prioridad (4 ago, tarde): Yei confirmó el presupuesto real — $8,000 MXN combinados entre los dos ($4,000 c/u), buscando un solo cuarto grande para ambos o un espacio con 2 cuartos disponibles, caminando 10-15 min máximo a CENART.</p>
+    <p style="margin-top:8px;"><b>Corrección importante (4 ago, noche):</b> se verificó cada candidato con Google Maps en vez de confiar en el nombre de la colonia. Resultado: "Pueblo de los Reyes" está en realidad a 46-51 min caminando de CENART, no es caminable. También se confirmó que el link de "Frente al CNA" (Roomgo) ya no lleva al anuncio, y que rentola.com.mx dejó de existir (DNS caído). Se buscó también en Facebook Marketplace en vivo con Yei, centrando la búsqueda en General Anaya/CENART (no en Cuauhtémoc) — se revisaron 7+ direcciones distintas, la mayoría entre 45-55 min.</p>
+    <p style="margin-top:8px;"><b>Rango ampliado (4 ago, noche):</b> como no existe nada real a 10-15 min dentro de $8,000, Yei decidió ampliar el criterio a 25-30 min caminando. Con eso, los 2 candidatos más cercanos que existen hoy son el loft de 2 camas cerca de Metro Taxqueña ($7,500, 32 min) y Prado Churubusco ($6,000, 26-30 min, 1 persona). Ninguno es perfecto, pero son los más reales encontrados en toda la búsqueda de hoy.</p>
+    <p style="margin-top:8px;"><b>Auditoría de links (4 ago, noche):</b> se verificó el estado real de cada link con requests directos. "Frente al CNA" (Roomgo) se confirmó definitivamente roto — redirige a búsqueda general, no al anuncio — se dio de baja. El loft de Facebook confirma link válido y estable. El de Mercado Libre da 403 a scripts automatizados pero carga bien en navegador real (bot-block de la plataforma, no un link roto).</p>
+    <p id="lastUpdated" class="tab">Última actualización: 4 ago 2026</p>
   </footer>
 </div>
 
@@ -342,20 +383,6 @@
   const BUDGET_TOTAL = 8000;
 
   const listings = [
-    {
-      titulo: "Frente al CNA",
-      plataforma: "Roomgo",
-      link: "https://www.roomgo.com.mx/en-renta-coyoacan/habitacion-frente-al-cna-entre-tlalpan-ermita-y-rio-churubusco/H21090417237711",
-      precio: 6500,
-      colonia: "El Prado / Andrómeda",
-      capacidad: "1 persona",
-      caminable: "si",
-      contrato: "no_confirmado",
-      arrendador: "no_se",
-      deposito: "no_se",
-      contacto: "Roomgo exige crear cuenta para ver el anuncio.",
-      notas: "El link directo redirige a la búsqueda general de Coyoacán, no al anuncio — probablemente vencido. Es para 1 sola persona de todos modos."
-    },
     {
       titulo: "Loft equipado cerca Metro Taxqueña — 2 camas",
       plataforma: "Facebook Marketplace",
@@ -368,7 +395,7 @@
       arrendador: "no_se",
       deposito: "no_se",
       contacto: "Vendedor: Rafa Patria (6 valoraciones en FB). Contactar por Messenger desde la publicación.",
-      notas: "Loft equipado con 2 camas, baño propio, cocina completa, agua caliente 24h, wifi. SÍ es un espacio propio para los dos, no compartido. 32 min / 2.3 km desde Metro Tasqueña a CENART — el mejor candidato real de hoy."
+      notas: "NUEVO (4 ago, en vivo con Yei): loft equipado con 2 camas, baño propio, cocina completa (refri, microondas, estufa), agua caliente 24h, wifi. Dentro de presupuesto y SÍ es un espacio propio para los dos, no compartido. VERIFICADO EN MAPA: 32 min / 2.3 km desde Metro Tasqueña a CENART — un poco arriba del rango de 25-30 min, pero es el mejor candidato real de hoy considerando todo (precio, privacidad, capacidad)."
     },
     {
       titulo: "Recámara en renta, Prado Churubusco",
@@ -382,23 +409,23 @@
       arrendador: "no_se",
       deposito: "no_se",
       contacto: "Publicado por particular (Jorge Alfredo). El anuncio oculta el teléfono hasta iniciar sesión en Mercado Libre.",
-      notas: "26-30 min / 1.9 km a CENART. Es para 1 sola persona, no resuelve la prioridad de espacio para los dos."
+      notas: "VERIFICADO EN MAPA (4 ago): 26-30 min / 1.9 km a CENART — dentro del rango ampliado de 25-30 min. Pero es para 1 sola persona, no resuelve la prioridad de espacio para los dos."
     }
   ];
 
   const sources = [
-    { name: "Mercado Libre Inmuebles", status: "used", label: "consultado" },
-    { name: "Roomgo", status: "used", label: "exige cuenta" },
-    { name: "Rentola", status: "blocked", label: "dominio caído" },
-    { name: "Propiedades.com", status: "used", label: "consultado" },
-    { name: "Inmuebles24", status: "used", label: "consultado" },
-    { name: "Trovit", status: "used", label: "consultado" },
-    { name: "Metros Cúbicos", status: "used", label: "consultado" },
-    { name: "Homie", status: "used", label: "consultado" },
-    { name: "Badi", status: "manual", label: "requiere cuenta" },
-    { name: "Vivanuncios", status: "used", label: "consultado" },
+    { name: "Mercado Libre Inmuebles", status: "used", label: "consultado — hoy sí se abrieron anuncios individuales directamente" },
+    { name: "Roomgo", status: "used", label: "consultado — exige cuenta, URL directa redirige a búsqueda general" },
+    { name: "Rentola", status: "blocked", label: "dominio caído hoy (no resuelve)" },
+    { name: "Propiedades.com", status: "used", label: "consultado — candidato anterior resultó fuera del mercado" },
+    { name: "Inmuebles24", status: "used", label: "consultado — sin anuncio individual en zona válida" },
+    { name: "Trovit", status: "used", label: "consultado — agregador, redirige a otras plataformas" },
+    { name: "Metros Cúbicos", status: "used", label: "consultado — sin candidato verificable" },
+    { name: "Homie", status: "used", label: "consultado — nada en zona y presupuesto" },
+    { name: "Badi", status: "manual", label: "requiere cuenta para ver anuncios" },
+    { name: "Vivanuncios", status: "used", label: "sin anuncio individual confirmable en zona válida" },
     { name: "Lamudi", status: "blocked", label: "bloquea (403)" },
-    { name: "Facebook (Marketplace y grupos)", status: "used", label: "consultado en vivo" },
+    { name: "Facebook (Marketplace y grupos)", status: "manual", label: "sin soporte de scraping — no se leyeron ni inventaron datos" },
     { name: "Booking.com", status: "manual", label: "no es renta real" }
   ];
 
@@ -572,5 +599,6 @@
 
   render();
 </script>
+
 </body>
 </html>
