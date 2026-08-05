@@ -350,8 +350,8 @@
   </div>
 
   <div class="alert inset priority">
-    <span class="tag">Lista filtrada (4 ago, noche) — solo lo que compite de verdad</span>
-    Presupuesto real: <b>$8,000 MXN combinados</b> ($4,000 c/u), rango caminando: <b>25-30 min máximo</b>. Solo se muestran candidatos <b>compartidos</b> (espacio para los dos) — los de 1 sola persona se dejan fuera por ahora. El loft de Taxqueña sale a <b>$3,750 c/u</b> ($7,500 ÷ 2) — cabe en el presupuesto individual de $4,000.
+    <span class="tag">Criterio actualizado (5 ago)</span>
+    Presupuesto real: <b>$8,000 MXN combinados</b> ($4,000 c/u). Solo candidatos <b>compartidos</b> (espacio para los dos). La distancia caminando (idealmente 25-30 min) ya <b>no descarta automáticamente</b> a un candidato — se muestra el dato real y ustedes deciden; el precio sigue siendo el filtro duro. Esto para no perder opciones que Fang comparte aunque impliquen transporte.
   </div>
 
   <div class="alert inset">
@@ -372,8 +372,8 @@
       <h2>Recomendación de esta semana — para 2 personas</h2>
     </div>
     <div class="route active" data-route-panel="a">
-      <div class="route-name">Un solo lugar para ambos — sigue sin novedades</div>
-Nada cambió en el estado de los dos candidatos: el depa de 2 recámaras en Parque San Andrés ($8,000 → $4,000 c/u, 22 min caminando) sigue esperando que el anunciante (Gerardo Duran Guerrero) se ponga en contacto directo, y el loft cerca de Metro Taxqueña ($7,500 → $3,750 c/u, 2 camas, 32 min) sigue esperando respuesta de Rafa Patria desde el 4 de agosto. Hoy (5 ago) no se pudo reverificar ninguno de los dos anuncios ni encontrar candidatos nuevos: todas las plataformas bloquearon el acceso automático (ver nota abajo). Nada indica que hayan dejado de estar disponibles — solo que no se pudo confirmar hoy.
+      <div class="route-name">Tres candidatos activos, dos esperando respuesta</div>
+Parque San Andrés ($8,000 → $4,000 c/u, 22 min caminando) sigue esperando que Gerardo Duran Guerrero se comunique. El loft de Taxqueña ($7,500 → $3,750 c/u, 32 min) sigue esperando a Rafa Patria desde el 4 de agosto. Se sumó un tercero — Prados de Coyoacán ($7,800 → $3,900 c/u) — que Fang encontró: requiere transporte (1h04min, 4.7 km), pero cumple precio y se deja en la lista para no descartar lo que comparte.
     </div>
   </div>
 
@@ -446,6 +446,20 @@ Nada cambió en el estado de los dos candidatos: el depa de 2 recámaras en Parq
   const BUDGET_TOTAL = 8000;
 
   const listings = [
+    {
+      titulo: "Depa 2 recámaras — Castor 43, Prados de Coyoacán",
+      plataforma: "Propiedades.com",
+      link: "https://propiedades.com/inmuebles/departamento-en-renta-castor-43-coapa-prado-coyoacan-coyoacan-04810-ciudad-de-mexico-cdmx-43-prados-de-coyoacan-df-31346474",
+      precio: 7800,
+      colonia: "Prados de Coyoacán / Coapa",
+      capacidad: "2 recámaras con clóset — cada quien su cuarto",
+      caminable: "no",
+      contrato: "no_confirmado",
+      arrendador: "no_se",
+      deposito: "no_se",
+      contacto: "Botones 'Contactar' y 'Consultar' (WhatsApp) en la página del anuncio — no se pudo revelar el número directo hoy.",
+      notas: "AGREGADO A PETICIÓN DE YEI (5 ago) — Fang lo mandó y Yei pidió incluirlo aunque quede lejos, valorando lo que Fang comparte. 72 m², 2 recámaras, cocina integral, patio de servicio, 1 estacionamiento, admite mascotas. $7,800 ÷ 2 = $3,900 c/u — cabe en presupuesto. VERIFICADO EN MAPA: 1h04min / 4.7 km a CENART — requiere transporte, no es caminable (más lejos que CU, que ya se había descartado por lo mismo). Metro más cercano: Universidad o Taxqueña."
+    },
     {
       titulo: "Depa 2 recámaras — Carreteraco 36, Parque San Andrés",
       plataforma: "Propiedades.com",
