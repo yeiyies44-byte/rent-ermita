@@ -373,7 +373,7 @@
     </div>
     <div class="route active" data-route-panel="a">
       <div class="route-name">Un solo lugar para ambos — la única opción real hoy</div>
-      El loft cerca de Metro Taxqueña ($7,500 → $3,750 c/u, 2 camas, espacio propio no compartido con extraños, 32 min caminando) es el único candidato compartido dentro de presupuesto. <b>Ya se le escribió</b> al vendedor (Rafa Patria) por Messenger el 4 de agosto — esperando respuesta.
+Nuevo candidato (4 ago, vía Fang): depa de 2 recámaras en Parque San Andrés, $8,000 → $4,000 c/u, <b>22 min caminando</b> — más cerca que el loft de Taxqueña. WhatsApp directo disponible. El loft cerca de Metro Taxqueña ($7,500 → $3,750 c/u, 2 camas, 32 min) sigue como segunda opción — <b>ya se le escribió</b> al vendedor (Rafa Patria) por Messenger el 4 de agosto, esperando respuesta.
     </div>
   </div>
 
@@ -436,6 +436,7 @@
     <p style="margin-top:8px;"><b>Corrección importante (4 ago, noche):</b> se verificó cada candidato con Google Maps en vez de confiar en el nombre de la colonia. Resultado: "Pueblo de los Reyes" está en realidad a 46-51 min caminando de CENART, no es caminable. También se confirmó que el link de "Frente al CNA" (Roomgo) ya no lleva al anuncio, y que rentola.com.mx dejó de existir (DNS caído). Se buscó también en Facebook Marketplace en vivo con Yei, centrando la búsqueda en General Anaya/CENART (no en Cuauhtémoc) — se revisaron 7+ direcciones distintas, la mayoría entre 45-55 min.</p>
     <p style="margin-top:8px;"><b>Rango ampliado (4 ago, noche):</b> como no existe nada real a 10-15 min dentro de $8,000, Yei decidió ampliar el criterio a 25-30 min caminando. Con eso, los 2 candidatos más cercanos que existen hoy son el loft de 2 camas cerca de Metro Taxqueña ($7,500, 32 min) y Prado Churubusco ($6,000, 26-30 min, 1 persona). Ninguno es perfecto, pero son los más reales encontrados en toda la búsqueda de hoy.</p>
     <p style="margin-top:8px;"><b>Auditoría de links (4 ago, noche):</b> se verificó el estado real de cada link con requests directos. "Frente al CNA" (Roomgo) se confirmó definitivamente roto — redirige a búsqueda general, no al anuncio — se dio de baja. El loft de Facebook confirma link válido y estable. El de Mercado Libre da 403 a scripts automatizados pero carga bien en navegador real (bot-block de la plataforma, no un link roto).</p>
+    <p style="margin-top:8px;"><b>Links de Fang (4 ago, noche):</b> mandó 2 links de Propiedades.com. El de Carreteraco 36 (Parque San Andrés) se verificó y agregó — 22 min a CENART, mejor que todo lo demás en la lista. El de Castor 43 (Coapa/Prados de Coyoacán) se descartó — 1h04min / 4.7 km, demasiado lejos.</p>
     <p id="lastUpdated" class="tab">Última actualización: 4 ago 2026</p>
   </footer>
 </div>
@@ -444,6 +445,21 @@
   const BUDGET_TOTAL = 8000;
 
   const listings = [
+    {
+      titulo: "Depa 2 recámaras — Carreteraco 36, Parque San Andrés",
+      plataforma: "Propiedades.com",
+      link: "https://propiedades.com/inmuebles/departamento-en-renta-carreteraco-36-parque-san-andres-df-31309709",
+      precio: 8000,
+      colonia: "Parque San Andrés / San Diego Churubusco",
+      capacidad: "2 recámaras con clóset — cada quien su cuarto",
+      caminable: "si",
+      contrato: "no_confirmado",
+      arrendador: "no_se",
+      deposito: "no_se",
+      prioridad: true,
+      contacto: "WhatsApp directo: +52 55 8957 7494 (revelado desde el botón 'Consultar' del anuncio, sin mandar nada).",
+      notas: "NUEVO (4 ago, link mandado por Fang): 56 m², cocina integral, estacionamiento, área de servicio, vigilancia 24h, paneles solares, planta de luz, elevador, gimnasio, salón social, acceso controlado. $8,000 ÷ 2 = $4,000 c/u — justo en el límite del presupuesto individual. VERIFICADO EN MAPA: 22 min / 1.6 km a CENART — más cerca que el loft de Taxqueña (32 min). Mejor candidato real hasta ahora."
+    },
     {
       titulo: "Loft equipado cerca Metro Taxqueña — 2 camas",
       plataforma: "Facebook Marketplace",
